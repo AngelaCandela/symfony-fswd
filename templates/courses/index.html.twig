@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+    <div class="example-wrapper">  
+
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Language</th>
+                <th>Level</th>
+                <th>Students No</th>
+            </tr>
+            {% for course in courses %}
+            <tr>
+                <td>{{course.name}}</td>
+                <td>{{course.language}}</td>
+                <td>{{course.level}}</td>
+                <td>{{course.students|length}}</td>
+            </tr>
+            {% endfor %}                               
+        </table> 
+    </div>
+{% endblock %}

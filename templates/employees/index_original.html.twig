@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Employees list{% endblock %}
+
+{% block body %}
+    <div class="example-wrapper">
+        <h1>Hello {{ myname }}! ✅</h1>  
+
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Age</th>
+                <th>City</th>
+            </tr>
+            {% for employee in employees %}
+            <tr>
+                <td>{{employee.name}}</td>
+                <td>{{employee.email}}</td>
+                <td>{{employee.age}}</td>
+                <td>{{employee.city}}</td>
+                <td><button><a href="{{ path('employees_edit', {id: employee.id}) }}">Edit</a></button></td>
+                <td><button><a href="{{ path('employees_delete', {id: employee.id}) }}">Delete</a></button></td>
+            </tr>
+            {% endfor %}                               
+        </table> 
+    </div>
+{% endblock %}

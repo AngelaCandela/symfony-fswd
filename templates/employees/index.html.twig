@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Welcome!</title>        
+    </head>
+    <body>
+        <div class="example-wrapper">
+            <h1>Hello {{ myname }}! ✅</h1>  
+
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Age</th>
+                    <th>City</th>
+                </tr>
+                {% for employee in employees %}
+                <tr>
+                    <td>{{employee.name}}</td>
+                    <td>{{employee.email}}</td>
+                    <td>{{employee.age}}</td>
+                    <td>{{employee.city}}</td>
+                </tr>
+                {% endfor %}                               
+            </table> 
+        </div>
+    </body>
+</html>
