@@ -1,25 +1,39 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% endblock %}
+{% block title %}Courses index{% endblock %}
 
 {% block body %}
-    <div class="example-wrapper">  
+    <h1>Courses index</h1>
 
-        <table>
+    <table class="table">
+        <thead>
             <tr>
+                <th>Id</th>
                 <th>Name</th>
                 <th>Language</th>
                 <th>Level</th>
-                <th>Students No</th>
+                <th>actions</th>
             </tr>
-            {% for course in courses %}
+        </thead>
+        <tbody>
+        {% for course in courses %}
             <tr>
-                <td>{{course.name}}</td>
-                <td>{{course.language}}</td>
-                <td>{{course.level}}</td>
-                <td>{{course.students|length}}</td>
+                <td>{{ course.id }}</td>
+                <td>{{ course.name }}</td>
+                <td>{{ course.language }}</td>
+                <td>{{ course.level }}</td>
+                <td>
+                    <a href="{{ path('courses_show', {'id': course.id}) }}">show</a>
+                    <a href="{{ path('courses_edit', {'id': course.id}) }}">edit</a>
+                </td>
             </tr>
-            {% endfor %}                               
-        </table> 
-    </div>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('courses_new') }}">Create new</a>
 {% endblock %}

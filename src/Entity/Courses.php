@@ -41,7 +41,7 @@ class Courses
 
     public function __construct()
     {
-        $this->student = new ArrayCollection();
+        $this->students = new ArrayCollection();
     }
 
     public function getId(): ?int

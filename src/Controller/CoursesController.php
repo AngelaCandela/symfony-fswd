@@ -2,81 +2,93 @@
 
 namespace App\Controller;
 
+use App\Entity\Courses;
+use App\Form\CoursesType;
+use App\Repository\CoursesRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Doctrine\ORM\EntityManagerInterface;
-use App\Entity\Courses;
-use App\Entity\Students;
-use App\Repository\CoursesRepository;
 
+/**
+ * @Route("/courses")
+ */
 class CoursesController extends AbstractController
 {
     /**
-     * @Route("/courses", name="courses")
+     * @Route("/", name="courses_index", methods={"GET"})
      */
-    public function index(CoursesRepository $coursesRepository): Response {   
-        $courses = $coursesRepository -> findAll();        
-
+    public function index(CoursesRepository $coursesRepository): Response
+    {
         return $this->render('courses/index.html.twig', [
-            'controller_name' => 'CoursesController',
-            'courses' => $courses,
-        ]);
-    }
-
-    /**  
-    * @Route("/courses/add/", name="courses_add")
-    */
-   
-    public function add(EntityManagerInterface $em): Response {
-
-        $course = new Courses();
-        $course->setName('Curso de Inglés');
-        $course->setLanguage('Inglés');
-        $course->setLevel(4);
-
-        $course2 = new Courses();
-        $course2->setName('Curso de Chino');
-        $course2->setLanguage('Chino');
-        $course2->setLevel(2);
-
-        $student = new Students();
-        $student->setName('Angela');
-        $student->setAge(17);
-
-        $course->addStudent($student);
-
-        $em->persist($course);
-        $em->persist($course2);
-        $em->persist($student);
-
-        $em->flush();
-
-        return $this->render('courses/index.html.twig', [
-            'controller_name' => 'CourseController',
+            'courses' => $coursesRepository->findAll(),
         ]);
     }
 
     /**
-     * @Route("/courses/{id}", name="courses_show")
+     * @Route("/new", name="courses_new", methods={"GET","POST"})
      */
-    public function show($id, CoursesRepository $coursesRepository): Response
-    {        
-        $course = $coursesRepository->find($id);
-        
+    public function new(Request $request): Response
+    {
+        $course = new Courses();
+        $form = $this->createForm(CoursesType::class, $course);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($course);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('courses_index');
+        }
+
+        return $this->render('courses/new.html.twig', [
+            'course' => $course,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/{id}", name="courses_show", methods={"GET"})
+     */
+    public function show(Courses $course): Response
+    {
         return $this->render('courses/show.html.twig', [
             'course' => $course,
         ]);
     }
 
     /**
-     * @Route("/courses/filter/{language}", name="courses_filter")
+     * @Route("/{id}/edit", name="courses_edit", methods={"GET","POST"})
      */
-    public function filter($language, CoursesRepository $coursesRepository): Response {   
-        $courses = $coursesRepository -> findByLanguage($language);        
+    public function edit(Request $request, Courses $course): Response
+    {
+        $form = $this->createForm(CoursesType::class, $course);
+        $form->handleRequest($request);
 
-        return $this->render('courses/index.html.twig', [
-            'courses' => $courses,
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
+
+            return $this->redirectToRoute('courses_index');
+        }
+
+        return $this->render('courses/edit.html.twig', [
+            'course' => $course,
+            'form' => $form->createView(),
         ]);
+    }
+
+    /**
+     * @Route("/{id}", name="courses_delete", methods={"DELETE"})
+     */
+    public function delete(Request $request, Courses $course): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$course->getId(), $request->request->get('_token'))) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($course);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('courses_index');
     }
 }
